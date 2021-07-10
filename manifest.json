@@ -1,0 +1,37 @@
+
+{
+
+    "name": "RedPing",
+    "short_name": "RP",
+    "start_url": "/redping/",
+    "background_color": "white",
+    "theme_color": "white",
+    "orientation": "portrait",
+    "display": "fullscreen",
+    "icons": [
+        {
+            "src": "rp48.png",
+            "sizes": "48x48",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "rp72.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "rp144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "rp512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ]
+}
