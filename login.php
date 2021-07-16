@@ -54,11 +54,11 @@
 
         <nav class="nav-menu d-none d-lg-block">
           <ul>
-            <li class="active"><a href="#header">Home</a></li>
+            <li class="active"><a href="index.php">Home</a></li>
             <li class="disabled"><a href="#about">My pins</a></li>
-            <li><a href="#services">Map</a></li>
+            <li><a href="map.php">Map</a></li>
 
-            <li class="get-started"><a href="signup.html">Sign up!</a></li>
+            <li class="get-started"><a href="signup.php">Sign up!</a></li>
           </ul>
         </nav><!-- .nav-menu -->
       </div><!-- End Header Container -->

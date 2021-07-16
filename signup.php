@@ -1,3 +1,8 @@
+<?php 
+include('db.php')
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -41,22 +46,20 @@
 
 <body>
 
-
-
   <!-- ======= Header ======= -->
   <header id="header" class="fixed-top d-flex align-items-center">
     <div class="container">
       <div class="header-container d-flex align-items-center">
         <div class="logo mr-auto">
           <h1 class="text-light"><a href="index.php"><span>RedPing</span></a></h1>
-
+         
         </div>
 
         <nav class="nav-menu d-none d-lg-block">
           <ul>
-            <li class="active"><a href="#header">Home</a></li>
+            <li class="active"><a href="index.php">Home</a></li>
             <li class="disabled"><a href="#about">My pins</a></li>
-            <li><a href="#services">Map</a></li>
+            <li><a href="map.php">Map</a></li>
 
             <li class="get-started"><a href="login.php">Log in</a></li>
           </ul>
@@ -65,59 +68,63 @@
     </div>
   </header><!-- End Header -->
 
-<?php
-    include("authenticate.php");
+  <!-- ======= Hero Section ======= -->
+  <section id="register" class="d-flex align-items-center">
+    <div class="container text-center position-relative" data-aos="fade-in" data-aos-delay="200">
+      
+    <form method="post" action="db.php">
+      <?php include('errors.php'); ?>
+      <div class="input-group">
+        <label>Username</label>
+        <input type="text" name="username" value="<?php echo $username; ?>">
+      </div>
+      <div class="input-group">
+        <label>First Name</label>
+        <input type="text" name="first_name" value="<?php echo $first_name; ?>">
+      </div>
+      <div class="input-group">
+        <label>Middle Name</label>
+        <input type="text" name="middle_name" value="<?php echo $middle_name; ?>">
+      </div>
+      <div class="input-group">
+        <label>Last Name</label>
+        <input type="text" name="last_name" value="<?php echo $last_name; ?>">
+      </div>
 
-    if(isset($_POST['submit'])) {
-        $name = $_POST['name'];
-        $email = $_POST['email'];
-        $user = $_POST['username'];
-        $pass = $_POST['password'];
+      <div class="input-group">
+        <label>City</label>
+        <input type="text" name="city" value="<?php echo $city; ?>">
+      </div>
+      <div class="input-group">
+        <label>Province</label>
+        <input type="text" name="province" value="<?php echo $province; ?>">
+      </div>
+      <div class="input-group">
+        <label>Street</label>
+        <input type="text" name="street" value="<?php echo $street; ?>">
+      </div>
 
-        if($user == "" || $pass == "" || $name == "" || $email == "") {
-            echo "All fields should be filled. Either one or many fields are empty.";
-            echo "<br/>";
-            echo "<a href='register.php'>Go back</a>";
-        } else {
-            mysqli_query($mysqli, "INSERT INTO login(name, email, username, password) VALUES('$name', '$email', '$user', md5('$pass'))")
-            or die("Could not execute the insert query.");
-
-            echo "Registration successfully";
-            echo "<br/>";
-            echo "<a href='login.php'>Login</a>";
-        }
-    } else {
-?>
-        <p><font size="+2">Register</font></p>
-        <form name="form1" method="post" action="">
-            <table width="75%" border="0">
-                <tr>
-                    <td width="10%">Full Name</td>
-                    <td><input type="text" name="name"></td>
-                </tr>
-                <tr>
-                    <td>Email</td>
-                    <td><input type="text" name="email"></td>
-                </tr>
-                <tr>
-                    <td>Username</td>
-                    <td><input type="text" name="username"></td>
-                </tr>
-                <tr>
-                    <td>Password</td>
-                    <td><input type="password" name="password"></td>
-                </tr>
-                <tr>
-                    <td> </td>
-                    <td><input type="submit" name="submit" value="Submit"></td>
-                </tr>
-            </table>
-        </form>
-    <?php
-    }
-    ?>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" name="password_1">
+      </div>
+      <div class="input-group">
+        <label>Confirm password</label>
+        <input type="password" name="password_2">
+      </div>
+      <div class="input-group">
+        <button type="submit" class="btn" name="reg_user">Register</button>
+      </div>
+      <p>
+        Already a member? <a href="login.php">Sign in</a>
+      </p>
+    </form>
 
 
+    </div>
+  </section><!-- End Hero -->
+
+ 
 
 
   <a href="#" class="back-to-top"><i class="icofont-simple-up"></i></a>

@@ -1,7 +1,78 @@
-
-
 <?php
-session_start();
+
+  function add_location(){
+    $con=mysqli_connect ("localhost", 'root', '','redping');
+    if (!$con) {
+        die('Not connected : ' . mysqli_connect_error());
+    }
+    $location_id = $_GET['location'];
+    $user_id = $_GET['user'];
+    $time = $_GET['time'];
+    // Inserts new row with place data.
+    $query = sprintf("INSERT INTO my_pins " .
+        " (location_id, user_id, time) " .
+        " VALUES ('%s', '%s', '%s');",
+        mysqli_real_escape_string($con, $location_id),
+        mysqli_real_escape_string($con, $user_id),
+        mysqli_real_escape_string($con, $time));
+
+    $result = mysqli_query($con,$query);
+    echo json_encode("Inserted Successfully");
+    if (!$result) {
+        die('Invalid query: ' . mysqli_error($con));
+    }
+  }
+  
+  function get_saved_locations(){
+    
+    $con=mysqli_connect ("localhost", 'root', '','redping');
+    if (!$con) {
+        die('Not connected : ' . mysqli_connect_error());
+    }
+    // update location with location_status if admin location_status.
+    $sqldata = mysqli_query($con,"select longitude,latitude from locations ");
+
+    $rows = array();
+    while($r = mysqli_fetch_assoc($sqldata)) {
+        $rows[] = $r;
+
+    }
+    $indexed = array_map('array_values', $rows);
+
+    //  $array = array_filter($indexed);
+
+    echo json_encode($indexed);
+    if (!$rows) {
+        return null;
+    }
+  }
+
+  function readings(){
+    
+    $con=mysqli_connect ("localhost", 'root', '','redping');
+    if (!$con) {
+        die('Not connected : ' . mysqli_connect_error());
+    }
+    // update location with location_status if admin location_status.
+    $sqldata = mysqli_query($con,"select reading from readings ");
+
+    $rows = array();
+    while($r = mysqli_fetch_assoc($sqldata)) {
+        $rows[] = $r;
+
+    }
+    $indexed = array_map('array_values', $rows);
+
+    //  $array = array_filter($indexed);
+
+    echo json_encode($indexed);
+    if (!$rows) {
+        return null;
+    }
+  }
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -52,6 +123,19 @@ session_start();
   <meta name="theme-color" content="#ffffff">
   <link rel="apple-touch-icon"  href="rp144.png">
 
+  <style type="text/css">
+    
+    .marker {
+      background-image: url('tower.png');
+      background-size: cover;
+      width: 40px;
+      height: 40px;
+      border-raduis: 50%;
+      cursor:pointer;
+    }
+ 
+  </style>
+
 
 </head>
 
@@ -96,8 +180,27 @@ session_start();
     </div>
   </header><!-- End Header -->
 
-  <div id='map' style='width: 100%; height: 100%;'></div>
 
+
+  <div id='map' style='height:100%;width:100%;'></div>
+
+  <div class="reading" style='
+  position:absolute; 
+  left: 650px; 
+  top:80px; 
+  width: 180px;
+  height: 110px;
+  background-color: white;
+  '>
+      <form action="" id="signupForm">
+          <h5>Street</h5>
+          <p>Readings: </p>
+          <input type="hidden" id="lat" name="lat" >
+          <input type="hidden" id="lng" name="lng">
+
+          <input type="submit" value="Pin" >
+      </form>
+  </div>
 
 
 
@@ -117,7 +220,114 @@ session_start();
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
-  <script src="mapbox.js" defer></script>
+  <!--<script src="mapbox.js" defer></script> -->
+
+
+  <script type="text/javascript">
+
+
+$(function(){
+    $("#reading").hide();
+    $("#").on("click", function(){
+        $("#div1, #div2").toggle();
+    });
+});
+
+
+
+
+        mapboxgl.accessToken = 'pk.eyJ1IjoidGhpZWYxMjMxOCIsImEiOiJja3B1azZkbW0xYnB5MnVxY3Fva3ZxN3liIn0.AtpmrQgGaofQmeNWyMTp2Q'
+
+
+    navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {
+        enableHighAccuracy: true
+    })
+
+    function successLocation(position){
+        console.log(position)
+        //setupMap([position.coords.longitude, position.coords.latitude])
+       setupMap([125.65980, 7.14931])
+    }
+
+    function errorLocation(){
+        setupMap([125.65999,7.14931])
+    }
+
+    function setupMap(center){
+
+       var saved_markers = <?= get_saved_locations() ?>;
+     
+
+        var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: center,
+        zoom: 17
+        })
+
+        var directions = new MapboxDirections({
+          accessToken: mapboxgl.accessToken
+        })
+
+        var popup = new Array(saved_markers.length);
+
+    
+       var readings =  <?= readings() ?>;
+
+        var counter = 1;
+   
+
+        for (let i = 0; i < saved_markers.length; i++) {
+          popup[i] = new mapboxgl.Popup({ 
+            offset: 20, 
+            anchor: 'top-left', 
+            closeButton: false, 
+            focusAfterOpen: true,
+            maxWidth: '55px',
+            }).setText( 
+            'Tower' + counter + "\n" + readings[i]
+            );
+            counter++;
+        }
+        
+
+      
+        
+
+       map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
+     //  map.addControl(directions, 'bottom-left')
+
+
+        for (let i = 0; i < saved_markers.length; i++) {
+          var el = document.createElement('div');
+          el.className = 'marker';
+          var markerss = new mapboxgl.Marker(el)
+           .setLngLat(saved_markers[i])
+           .setPopup(popup[i],top) 
+           .addTo(map)
+        }
+
+        markers.on('click', function (e) {
+        window.alert('test');
+
+
+        });
+
+
+   
+        
+     
+        
+
+
+      
+
+
+
+      }
+
+
+  </script>
 
 
 
