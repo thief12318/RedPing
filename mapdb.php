@@ -34,6 +34,32 @@ function add_location(){
         die('Invalid query: ' . mysqli_error($con));
     }
   }
+
+  if(isset($_GET['del_location'])) {
+    del_location();
+}
+
+function del_location(){
+    $con=mysqli_connect ("localhost", 'root', '','redping');
+    if (!$con) {
+        die('Not connected : ' . mysqli_connect_error());
+    }
+    $location_id = $_GET['location'];
+    $user_id = $_GET['user'];
+
+
+    $sql = "DELETE FROM my_pins WHERE user_id='" . $user_id . "' AND location_id='" . $location_id . "'";
+    if (mysqli_query($con, $sql)) {
+        echo json_encode('Successfully Deleted!');
+    } else {
+        die('Invalid query: ' . mysqli_error($con));
+    }
+
+    
+  }
+
+
+
   
   function get_saved_locations(){
     
@@ -66,7 +92,7 @@ function add_location(){
         die('Not connected : ' . mysqli_connect_error());
     }
     // update location with location_status if admin location_status.
-    $sqldata = mysqli_query($con,"select reading from readings ");
+    $sqldata = mysqli_query($con,"select reading from readings ORDER BY location_id DESC LIMIT 3");
 
     $rows = array();
     while($r = mysqli_fetch_assoc($sqldata)) {
@@ -182,12 +208,9 @@ function add_location(){
         }
         if(isset($_SESSION['loggedin'])) {
             $data = $_SESSION['user_id'];
-        }else{
-            $data = 0;
         }
-   
         // update location with location_status if admin location_status.
-        $q = "select time from my_pins where user_id =" . $data;
+        $q = "select time from my_pins";
         $sqldata = mysqli_query($con,$q);
         if (!$sqldata) {
         echo 'Could not run query: ' . mysql_error();

@@ -155,7 +155,7 @@ include 'mapdb.php';
 
             </div>
 
-  
+            <input type="hidden" id="determine" name="determine">
           <input type="submit" id="pin" value="Pin" >
       </form>
  
@@ -304,11 +304,13 @@ $(function(){
               if(Number(location_id[i]) ==  Number(location_id_pin[x]) && Number(user_id_pin[x]) == user){
                 document.getElementById("pin").value = "Remove";
                 document.getElementById("time_span1").innerHTML = time_pin[x];
+                document.getElementById("determine").value = 1;
                 $("#time_pin1").hide();
                 $("#time_pin2").show();
-                alert(user_id_pin[y])
+               
                 break;
               }else{
+                document.getElementById("determine").value = 2;
                 $("#time_pin1").show();
                 $("#time_pin2").hide();
                 document.getElementById("pin").value = "Pin";
@@ -346,28 +348,47 @@ $(function(){
         });
 
         $('#signupForm').submit(function(event){
-          <?php if(isset($_SESSION['loggedin'])) { ?>
-            event.preventDefault();
+          event.preventDefault();
+          if($('#determine').val() == 2){
+            <?php if(isset($_SESSION['loggedin'])) { ?>
+              
+              var location_id = $('#location').val();
+              var user_id = $('#user').val();
+              var time1 = $('#time1').val();
+              var time2 = $('#time2').val();
+
+              var url = 'mapdb.php?add_location&location=' + location_id 
+              + '&user=' + user_id + '&time1=' + time1
+              +  '&time2=' + time2;
+              $.ajax({
+                  url: url,
+                  method: 'GET',
+                  dataType: 'json',
+                  success: function(data){
+                      alert(data);
+                      location.reload();
+                  }
+                
+              });
+            <?php  }else{ ?> alert("You need to loggin first!");  <?php } ?> 
+          }else{
+       
             var location_id = $('#location').val();
             var user_id = $('#user').val();
-            var time1 = $('#time1').val();
-            var time2 = $('#time2').val();
-
-            var url = 'mapdb.php?add_location&location=' + location_id 
-            + '&user=' + user_id + '&time1=' + time1
-            +  '&time2=' + time2;
-            $.ajax({
-                url: url,
-                method: 'GET',
-                dataType: 'json',
-                success: function(data){
-                    alert(data);
-                    location.reload();
-                }
-               
-            });
-        <?php  }else{ ?> alert("You need to loggin first!");  <?php } ?> 
-         
+            var url = 'mapdb.php?del_location&location=' + location_id 
+              + '&user=' + user_id;
+              $.ajax({
+                  url: url,
+                  method: 'GET',
+                  dataType: 'json',
+                  success: function(data){
+                      alert(data);
+                      location.reload();
+                  }
+                
+              });
+            
+          }
         });
         
       }
