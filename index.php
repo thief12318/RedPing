@@ -129,7 +129,7 @@ session_start();
   <script src="assets/js/main.js"></script>
    <<script>
     if('serviceWorker' in navigator){
-      navigator.serviceWorker.register('/redping/sw.js');
+      navigator.serviceWorker.register('/sw.js');
 
     }
   </script>
