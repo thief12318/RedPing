@@ -70,6 +70,7 @@ function del_location(){
     // update location with location_status if admin location_status.
     $sqldata = mysqli_query($con,"select longitude,latitude from locations ");
 
+
     $rows = array();
     while($r = mysqli_fetch_assoc($sqldata)) {
         $rows[] = $r;
@@ -92,7 +93,7 @@ function del_location(){
         die('Not connected : ' . mysqli_connect_error());
     }
     // update location with location_status if admin location_status.
-    $sqldata = mysqli_query($con,"select reading from readings ORDER BY location_id DESC LIMIT 3");
+    $sqldata = mysqli_query($con,"select reading from readings ORDER BY location_id DESC LIMIT 4");
 
     $rows = array();
     while($r = mysqli_fetch_assoc($sqldata)) {
@@ -227,6 +228,32 @@ function del_location(){
             return null;
         }
     }
+
+    function get_date_time(){
+    
+        $con=mysqli_connect ("localhost", 'root', '','redping');
+        if (!$con) {
+            die('Not connected : ' . mysqli_connect_error());
+        }
+        // update location with location_status if admin location_status.
+
+        
+        $sqldata = mysqli_query($con,"select cast(date_time as time) from readings ORDER BY location_id DESC LIMIT 4");
+    
+        $rows = array();
+        while($r = mysqli_fetch_assoc($sqldata)) {
+            $rows[] = $r;
+    
+        }
+        $indexed = array_map('array_values', $rows);
+    
+        //  $array = array_filter($indexed);
+    
+        echo json_encode($indexed);
+        if (!$rows) {
+            return null;
+        }
+      }
 
 
 

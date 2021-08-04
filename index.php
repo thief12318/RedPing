@@ -63,15 +63,16 @@ session_start();
         </div>
 
 
-        <?php if(isset($_SESSION['loggedin'])) { ?>
+       <?php if(isset($_SESSION['loggedin'])) { ?>
+        
 
         <nav class="nav-menu d-none d-lg-block">
-             <p>&nbsp;&nbsp;&nbsp;&nbsp;Hello, <?=$_SESSION['name']?>!</p>
+            
           <ul>
-
-            <li class="active"><a href="#header">Home</a></li>
-            <li class="active"><a href="profile.php">My pins</a></li>
+           <li class="active" style="margin-right: 37vw; padding-left: 10px"> <p>Hello, <?=$_SESSION['name']?>!</p> </li>
+            <li class="active"><a href="index.php">Home</a></li>
             <li><a href="map.php">Map</a></li>
+            <li class="active"><a href="myping.php">My Pings</a></li>
             <li class="get-started"><a href="logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
           </ul>
         </nav><!-- .nav-menu -->
@@ -80,12 +81,10 @@ session_start();
          <nav class="nav-menu d-none d-lg-block">
 
           <ul>
-
-            <li class="active"><a href="#header">Home</a></li>
-            <li class="active"><a href="profile.php">My pins</a></li>
-            <li><a href="map.php">Map</a></li>
-            <li class="get-started"><a href="login.php"><i class="fas fa-sign-out-alt"></i>Log In</a></li>
-             <li class="get-started"><a href="signup.php"><i class="fas fa-sign-out-alt"></i>Sign Up</a></li>
+            <li  class="active"><a href="index.php">Home</a></li>
+            <li class="active"><a href="map.php">Map</a></li>
+            <li style=" @media (max-width: 768px) { margin: 20px;}" class="get-started"><a href="login.php"><i class="fas fa-sign-out-alt"></i>Log In</a></li>
+            <li style=" @media (max-width: 768px) { margin: 20px;}" class="get-started"><a href="signup.php"><i class="fas fa-sign-out-alt"></i>Sign Up</a></li>
           </ul>
         </nav><!-- .nav-menu -->
         <?php } ?>
@@ -104,7 +103,7 @@ session_start();
     <div class="container text-center position-relative" data-aos="fade-in" data-aos-delay="200">
       <h1>Plan a safe and fast route</h1>
       <h2>It's sunny, have a safe trip</h2>
-      <a href="#pins" class="btn-get-started scrollto">Check street flood update</a>
+      <a href="map.php" class="btn-get-started scrollto">Check street flood update</a>
     </div>
   </section><!-- End Hero -->
 

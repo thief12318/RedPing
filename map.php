@@ -84,15 +84,15 @@ include 'mapdb.php';
 
         </div>
 
-       <?php if(isset($_SESSION['loggedin'])) { ?>
+     <?php if(isset($_SESSION['loggedin'])) { ?>
 
         <nav class="nav-menu d-none d-lg-block">
-             <p>&nbsp;&nbsp;&nbsp;&nbsp;Hello, <?=$_SESSION['name']?>!</p>
+             
           <ul>
-
-            <li class="active"><a href="#header">Home</a></li>
-            <li class="active"><a href="profile.php">My pins</a></li>
-            <li><a href="map.php">Map</a></li>
+            <li class="active" style="margin-right: 37vw; padding-left: 10px"> <p>Hello, <?=$_SESSION['name']?>!</p> </li>
+            <li class="active"><a href="index.php">Home</a></li>
+            <li class="active"> <a href="map.php">Map</a></li>
+            <li class="active"><a href="myping.php">My Pings</a></li>
             <li class="get-started"><a href="logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
           </ul>
         </nav><!-- .nav-menu -->
@@ -102,8 +102,7 @@ include 'mapdb.php';
 
           <ul>
 
-            <li class="active"><a href="#header">Home</a></li>
-            <li class="active"><a href="profile.php">My pins</a></li>
+            <li class="active"><a href="index.php">Home</a></li>
             <li><a href="map.php">Map</a></li>
             <li class="get-started"><a href="login.php"><i class="fas fa-sign-out-alt"></i>Log In</a></li>
              <li class="get-started"><a href="signup.php"><i class="fas fa-sign-out-alt"></i>Sign Up</a></li>
@@ -120,13 +119,20 @@ include 'mapdb.php';
 
   <div class="reading" id='reading' style='
   position:absolute; 
-  left: 800px; 
-  top:80px; 
-  width: 220px;
-  height: 180px;
-  background-color: white;
+  text-align: center;
+  left: 1100px; 
+  top:100px; 
+  width: 330px;
+  height: 300px;
+  background-color: darkred;
+  color: white;
+  margin-top: 30px;
+  padding: 15px;
+  border-radius: 8px;
   '>  <h5><span id="streets"></span></h5>
-          <p>Reading: <span id="readings"></span></p>
+          <p>Flood level: <span id="readings"></span> cm.</p>
+          <p>Updated on <span id="date_time"></span></p>
+          <span id="wading"></span>
 
 
       <form action="" id="signupForm">     
@@ -156,7 +162,7 @@ include 'mapdb.php';
             </div>
 
             <input type="hidden" id="determine" name="determine">
-          <input type="submit" id="pin" value="Pin" >
+          <input style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px" type="submit" id="pin" value="Pin" >
       </form>
  
   </div>
@@ -216,13 +222,19 @@ $(function(){
        var user_id_pin = <?= get_user_id_pin() ?>;
       var user = <?php if(isset($_SESSION['loggedin'])) {echo $_SESSION['user_id'];}else{ echo 0;} ?>;
       var time_pin = <?= get_time_pin() ?>;
+      var date_time = <?= get_date_time() ?>;
+
+
+      
+
+
      
 
         var map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11',
         center: center,
-        zoom: 17
+        zoom: 16
         })
         
 
@@ -232,6 +244,7 @@ $(function(){
 
         var popup = new Array(saved_markers.length);
         var markers = new Array(saved_markers.length);
+        var wading = new Array(saved_markers.length);
         
     
       
@@ -292,9 +305,30 @@ $(function(){
             
             der = 1;
 
+            if(readings[i] <=10){
+              wading[i] = "Road is clear, drive ahead";
+            }
+            else if( readings[i] <=20){
+              wading[i] = "Unsafe for motor bikes and smaller vehicles"
+            }
+            else if(readings[i] <= 60){
+              wading[i] = "Unsafe for Taxi's aand smaller vehicles"
+            }
+            else if(readings[i] <= 90){
+              wading[i] = "Unsafe for Jeepneys, large SUV's, and smaller vehicles"
+            }
+            else if(readings[i]>90){
+              wading[i] = "High flood water. Unsafe for pick-up trucks and smaller vehicles"
+            }
+         
+
+
+           
             document.getElementById("streets").innerHTML = saved_streets[i];
             document.getElementById("readings").innerHTML = readings[i];
             document.getElementById("location").value = location_id[i];
+            document.getElementById("wading").innerHTML = wading[i];
+            document.getElementById("date_time").innerHTML = date_time[i];
            
             
           //  document.getElementById("lat").value = lngLat.lat;
