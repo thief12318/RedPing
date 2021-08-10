@@ -28,24 +28,26 @@ $stmt->close();
     <head>
         <meta charset="utf-8">
           <!-- Vendor CSS Files -->
-  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="assets/vendor/icofont/icofont.min.css" rel="stylesheet">
-  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-  <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
-  <link href="assets/vendor/venobox/venobox.css" rel="stylesheet">
-  <link href="assets/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
-  <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+        <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link href="assets/vendor/icofont/icofont.min.css" rel="stylesheet">
+        <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+        <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+        <link href="assets/vendor/venobox/venobox.css" rel="stylesheet">
+        <link href="assets/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
+        <link href="assets/vendor/aos/aos.css" rel="stylesheet">
 
+        <!-- Template Main CSS File -->
+        <link href="assets/css/style.css" rel="stylesheet">
 
-  <!-- Template Main CSS File -->
-  <link href="assets/css/style.css" rel="stylesheet">
-
-
-  <link rel="manifest"  href="manifest.json">
-  <meta name="theme-color" content="#ffffff">
-  <link rel="apple-touch-icon"  href="rp144.png">
+        <link rel="manifest"  href="manifest.json">
+        <meta name="theme-color" content="#ffffff">
+        <link rel="apple-touch-icon"  href="rp144.png">
         <link href="style.css" rel="stylesheet" type="text/css">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+
+        
+
+
     </head>
     <body class="loggedin" id="hero" class="d-flex align-items-center">
 

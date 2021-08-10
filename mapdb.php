@@ -8,6 +8,13 @@ if (!$con) {
 if(isset($_GET['add_location'])) {
     add_location();
 }
+if(isset($_GET['add_notif'])) {
+    add_notif();
+}
+
+if(isset($_GET['del_location'])) {
+    del_location();
+}
 
 function add_location(){
     $con=mysqli_connect ("localhost", 'root', '','redping');
@@ -18,8 +25,9 @@ function add_location(){
     $user_id = $_GET['user'];
     $time1 = $_GET['time1']*10000;
     $time2 = $_GET['time2'];
+    $time3 = $_GET['time3']*100;
 
-    $time = $time1 + $time2;
+    $time = $time1 + $time2 + $time3;
     // Inserts new row with place data.
     $query = sprintf("INSERT INTO my_pins " .
         " (location_id, user_id, time) " .
@@ -35,9 +43,35 @@ function add_location(){
     }
   }
 
-  if(isset($_GET['del_location'])) {
-    del_location();
-}
+  function add_notif(){
+    $con=mysqli_connect ("localhost", 'root', '','redping');
+    if (!$con) {
+        die('Not connected : ' . mysqli_connect_error());
+    }
+    $location = $_GET['location'];
+    $reading = $_GET['reading'];
+    $warning = $_GET['warning'];
+    $time = $_GET['time'];
+    $noti_status =  0;
+
+    // Inserts new row with place data.
+    $query = sprintf("INSERT INTO notifications" .
+        " (location, reading, warning, noti_status, time) " .
+        " VALUES ('%s', '%s', '%s', '%s', '%s');",
+        mysqli_real_escape_string($con, $location),
+        mysqli_real_escape_string($con, $reading),
+        mysqli_real_escape_string($con, $warning),
+        mysqli_real_escape_string($con, $noti_status),
+        mysqli_real_escape_string($con, $time));
+
+    $result = mysqli_query($con,$query);
+    echo json_encode($location . "\n" . $warning . "\n" . $time);
+    if (!$result) {
+        die('Invalid query: ' . mysqli_error($con));
+    }
+  }
+
+
 
 function del_location(){
     $con=mysqli_connect ("localhost", 'root', '','redping');

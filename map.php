@@ -3,7 +3,7 @@
 session_start();
 
 include 'mapdb.php';
-
+include 'fetch.php';
   
 
 
@@ -22,6 +22,10 @@ include 'mapdb.php';
 
 <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.js"></script>
 <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v4.1.0/mapbox-gl-directions.css" type="text/css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" ></script>
 
   <title>RedPing</title>
   <meta content="" name="description">
@@ -43,6 +47,12 @@ include 'mapdb.php';
   <link href="assets/vendor/venobox/venobox.css" rel="stylesheet">
   <link href="assets/vendor/owl.carousel/assets/owl.carousel.min.css" rel="stylesheet">
   <link href="assets/vendor/aos/aos.css" rel="stylesheet">
+
+
+  <!-- Mao ning maka guba sa font, need ni sya para sa glyphicons bell icon -->
+    
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" /> 
+
 
 
 
@@ -73,7 +83,7 @@ include 'mapdb.php';
 
 </head>
 
-<body>
+<body onload="realtimeClock()">
 
   <!-- ======= Header ======= -->
   <header id="header" class="fixed-top d-flex align-items-center">
@@ -90,22 +100,40 @@ include 'mapdb.php';
              
           <ul>
             <li class="active" style="margin-right: 37vw; padding-left: 10px"> <p>Hello, <?=$_SESSION['name']?>!</p> </li>
+            <div id="clock"></div>
             <li class="active"><a href="index.php">Home</a></li>
             <li class="active"> <a href="map.php">Map</a></li>
             <li class="active"><a href="myping.php">My Pings</a></li>
             <li class="get-started"><a href="logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
+            <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="label label-pill label-danger count" style="border-radius:10px;"></span> 
+      <span class="glyphicon glyphicon-bell" style="font-size:18px;"></span></a>
+      <ul class="dropdown-menu"></ul>
+     </li>
           </ul>
+
+
+
+  
+          
+     
+
         </nav><!-- .nav-menu -->
         <?php } else{ ?>
 
          <nav class="nav-menu d-none d-lg-block">
 
           <ul>
-
+            <div id="clock"></div>
             <li class="active"><a href="index.php">Home</a></li>
             <li><a href="map.php">Map</a></li>
             <li class="get-started"><a href="login.php"><i class="fas fa-sign-out-alt"></i>Log In</a></li>
              <li class="get-started"><a href="signup.php"><i class="fas fa-sign-out-alt"></i>Sign Up</a></li>
+                  <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="label label-pill label-danger count" style="border-radius:10px;"></span> 
+      <span class="glyphicon glyphicon-bell" style="font-size:18px;"></span></a>
+      <ul class="dropdown-menu"></ul>
+     </li>
           </ul>
         </nav><!-- .nav-menu -->
         <?php } ?><!-- .nav-menu -->
@@ -145,6 +173,11 @@ include 'mapdb.php';
           <span>Select time:</span>
           <select id="time1">
             <?php for($x = 0 ;$x <  12; $x++){ ?>
+              <option value="<?php echo $x + 1; ?>"><?php echo $x + 1;?></option>
+            <?php } ?>
+          </select>
+          <select id="time3">
+            <?php for($x = 0 ;$x <  60; $x++){ ?>
               <option value="<?php echo $x + 1; ?>"><?php echo $x + 1;?></option>
             <?php } ?>
           </select>
@@ -190,6 +223,21 @@ include 'mapdb.php';
 
   <script type="text/javascript">
 
+      var saved_markers = <?= get_saved_locations() ?>;
+      var saved_streets = <?= streets() ?>;
+      var readings =  <?= readings() ?>;
+      var location_id =  <?= get_location_id() ?>;
+      var location_id_pin = <?= get_location_id_pin() ?>;
+      var user_id_pin = <?= get_user_id_pin() ?>;
+      var user = <?php if(isset($_SESSION['loggedin'])) {echo $_SESSION['user_id'];}else{ echo 0;} ?>;
+      var time_pin = <?= get_time_pin() ?>;
+      var date_time = <?= get_date_time() ?>;
+
+
+      var cur_time;
+      var atime;
+      var btime;
+
 
 $(function(){
     $("#reading").hide();
@@ -214,21 +262,10 @@ $(function(){
 
     function setupMap(center){
 
-       var saved_markers = <?= get_saved_locations() ?>;
-       var saved_streets = <?= streets() ?>;
-       var readings =  <?= readings() ?>;
-       var location_id =  <?= get_location_id() ?>;
-       var location_id_pin = <?= get_location_id_pin() ?>;
-       var user_id_pin = <?= get_user_id_pin() ?>;
-      var user = <?php if(isset($_SESSION['loggedin'])) {echo $_SESSION['user_id'];}else{ echo 0;} ?>;
-      var time_pin = <?= get_time_pin() ?>;
-      var date_time = <?= get_date_time() ?>;
+       
 
 
-      
-
-
-     
+    
 
         var map = new mapboxgl.Map({
         container: 'map',
@@ -322,13 +359,18 @@ $(function(){
             }
          
 
+           atime = new Date('1997-07-25T' + date_time[i] + 'Z')
+            .toLocaleTimeString({},
+              {timeZone:'UTC',hour12:true,hour:'numeric',minute:'numeric',second:'numeric'}
+            );
+
 
            
             document.getElementById("streets").innerHTML = saved_streets[i];
             document.getElementById("readings").innerHTML = readings[i];
             document.getElementById("location").value = location_id[i];
             document.getElementById("wading").innerHTML = wading[i];
-            document.getElementById("date_time").innerHTML = date_time[i];
+            document.getElementById("date_time").innerHTML = atime;
            
             
           //  document.getElementById("lat").value = lngLat.lat;
@@ -337,7 +379,17 @@ $(function(){
             for (let x = 0; x < location_id_pin.length; x++){
               if(Number(location_id[i]) ==  Number(location_id_pin[x]) && Number(user_id_pin[x]) == user){
                 document.getElementById("pin").value = "Remove";
-                document.getElementById("time_span1").innerHTML = time_pin[x];
+
+     
+
+                btime = new Date('1997-07-25T' + time_pin[x] + 'Z')
+                .toLocaleTimeString({},
+                  {timeZone:'UTC',hour12:true,hour:'numeric',minute:'numeric'}
+                );
+
+
+
+                document.getElementById("time_span1").innerHTML = btime;
                 document.getElementById("determine").value = 1;
                 $("#time_pin1").hide();
                 $("#time_pin2").show();
@@ -390,9 +442,11 @@ $(function(){
               var user_id = $('#user').val();
               var time1 = $('#time1').val();
               var time2 = $('#time2').val();
+              var time3 = $('#time3').val();
+
 
               var url = 'mapdb.php?add_location&location=' + location_id 
-              + '&user=' + user_id + '&time1=' + time1
+              + '&user=' + user_id + '&time1=' + time1 + '&time3=' + time3
               +  '&time2=' + time2;
               $.ajax({
                   url: url,
@@ -426,6 +480,129 @@ $(function(){
         });
         
       }
+
+
+
+      $(document).ready(function(){
+ 
+      function load_unseen_notification(view = '')
+      {
+       
+        $.ajax({
+        url:"fetch.php",
+        method:"POST",
+        data:{view:view},
+        dataType:"json",
+        success:function(data)
+        {
+          $('.dropdown-menu').html(data.notification);
+          if(data.unseen_notification > 0)
+          {
+          $('.count').html(data.unseen_notification);
+          }
+        }
+        });
+      }
+ 
+        load_unseen_notification();
+        
+  
+
+        
+        $(document).on('click', '.dropdown-toggle', function(){
+          $('.count').html('');
+          load_unseen_notification('yes');
+        });
+        
+        setInterval(function(){ 
+          load_unseen_notification();; 
+        }, 3000);
+        
+        });
+
+
+
+        function realtimeClock(){
+
+          var rtClock = new Date();
+
+          var hours = rtClock.getHours();
+          var minutes = rtClock.getMinutes();
+          var seconds = rtClock.getSeconds();
+
+          var amPm = ( hours < 12 ) ? "AM" : "PM";
+
+          var hours2 = hours;
+          hours = (hours > 12 ) ? hours - 12: hours;
+
+          hours = ("0" + hours).slice(-2);
+          minutes = ("0" + minutes).slice(-2);
+          seconds = ("0" + seconds).slice(-2);
+          cur_time = hours2 + ":" + minutes + ":" + seconds;
+          
+
+          document.getElementById('clock').innerHTML = 
+            hours + " : " + minutes + " : " + seconds + " " + amPm;
+
+          
+          for (let x = 0; x < location_id_pin.length; x++){
+            if(time_pin[x] == cur_time && Number(user_id_pin[x]) == user){
+    
+              for(let i = 0; i < saved_markers.length; i++) {
+                if(Number(location_id[i]) == Number(location_id_pin[x])){
+
+                 
+              
+                  if(readings[i] <=10){
+                    wading[i] = "Road is clear, drive ahead";
+                  }
+                  else if( readings[i] <=20){
+                    wading[i] = "Unsafe for motor bikes and smaller vehicles"
+                  }
+                  else if(readings[i] <= 60){
+                    wading[i] = "Unsafe for Taxi's aand smaller vehicles"
+                  }
+                  else if(readings[i] <= 90){
+                    wading[i] = "Unsafe for Jeepneys, large SUV's, and smaller vehicles"
+                  }
+                  else if(readings[i]>90){
+                    wading[i] = "High flood water. Unsafe for pick-up trucks and smaller vehicles"
+                  }
+
+                  var location = saved_streets[i];
+                  var reading = readings[i];
+                  var warning = wading[i];
+                  var time = time_pin[x];
+
+      
+                  var url = 'mapdb.php?add_notif&location=' + location
+                    + '&reading=' + reading + '&warning=' + warning + '&time=' + time;
+                  $.ajax({
+                    url: url,
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(data){
+                        alert(data);
+                        load_unseen_notification();
+                        realtimeClock()
+                    }
+                  });
+                }
+              }
+            }
+          }
+
+          
+
+
+
+          var t = setTimeout(realtimeClock, 500);
+
+          
+
+        
+        }
+
 
   </script>
 
