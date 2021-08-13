@@ -26,8 +26,15 @@ function add_location(){
     $time1 = $_GET['time1']*10000;
     $time2 = $_GET['time2'];
     $time3 = $_GET['time3']*100;
-
-    $time = $time1 + $time2 + $time3;
+    $det1 = $time1 + $time3;
+    if($time2 != 0 && $det1< 120000){
+        $time = $time1 + $time2 + $time3;
+    }else{
+        $time = $time1 + $time3;
+    }
+    if($time2 == 0 && $time >= 120000){
+        $time = $time3;
+    }
     // Inserts new row with place data.
     $query = sprintf("INSERT INTO my_pins " .
         " (location_id, user_id, time) " .
@@ -102,7 +109,7 @@ function del_location(){
         die('Not connected : ' . mysqli_connect_error());
     }
     // update location with location_status if admin location_status.
-    $sqldata = mysqli_query($con,"select longitude,latitude from locations ");
+    $sqldata = mysqli_query($con,"select longitude, latitude from locations ");
 
 
     $rows = array();
@@ -120,14 +127,14 @@ function del_location(){
     }
   }
 
-  function readings(){
+ function readings(){
     
     $con=mysqli_connect ("localhost", 'root', '','redping');
     if (!$con) {
         die('Not connected : ' . mysqli_connect_error());
     }
     // update location with location_status if admin location_status.
-    $sqldata = mysqli_query($con,"select reading from readings ORDER BY location_id DESC LIMIT 4");
+    $sqldata = mysqli_query($con,"select reading from readings ORDER BY id DESC LIMIT 4");
 
     $rows = array();
     while($r = mysqli_fetch_assoc($sqldata)) {
@@ -272,7 +279,7 @@ function del_location(){
         // update location with location_status if admin location_status.
 
         
-        $sqldata = mysqli_query($con,"select cast(date_time as time) from readings ORDER BY location_id DESC LIMIT 4");
+        $sqldata = mysqli_query($con,"SELECT cast(date_time as time) FROM readings ORDER BY id DESC LIMIT 4");
     
         $rows = array();
         while($r = mysqli_fetch_assoc($sqldata)) {

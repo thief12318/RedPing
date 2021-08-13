@@ -17,12 +17,15 @@ if(mysqli_num_rows($result) > 0)
 {
 while($row = mysqli_fetch_array($result))
 {
+    $hours = date("g:i a", strtotime($row["time"]));
+
+
   $output .= '
   <li>
   <a href="#">
   <strong>'.$row["location"].'</strong><br />
   <small><em>'.$row["warning"].'</em></small><br />
-  <small><em>'.$row["time"].'</em></small>
+  <small><em>'.$hours.'</em></small>
   </a>
   </li>
   ';

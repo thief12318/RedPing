@@ -4,9 +4,6 @@ session_start();
 
 include 'mapdb.php';
 include 'fetch.php';
-  
-
-
 ?>
 
 <!DOCTYPE html>
@@ -51,7 +48,7 @@ include 'fetch.php';
 
   <!-- Mao ning maka guba sa font, need ni sya para sa glyphicons bell icon -->
     
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" /> 
+  <script src="https://code.iconify.design/2/2.0.3/iconify.min.js"></script>
 
 
 
@@ -74,7 +71,7 @@ include 'fetch.php';
       background-size: cover;
       width: 40px;
       height: 40px;
-      border-raduis: 50%;
+      border-radius: 50%;
       cursor:pointer;
     }
  
@@ -99,15 +96,14 @@ include 'fetch.php';
         <nav class="nav-menu d-none d-lg-block">
              
           <ul>
-            <li class="active" style="margin-right: 37vw; padding-left: 10px"> <p>Hello, <?=$_SESSION['name']?>!</p> </li>
-            <div id="clock"></div>
+            <li class="active" style="margin-right: 28vw; padding-left: 0px"> <p>Hello, <?=$_SESSION['name']?>!</p>
+            <div class="active"  id="clock"></div> </li>
             <li class="active"><a href="index.php">Home</a></li>
             <li class="active"> <a href="map.php">Map</a></li>
-            <li class="active"><a href="myping.php">My Pings</a></li>
             <li class="get-started"><a href="logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
             <li class="dropdown">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="label label-pill label-danger count" style="border-radius:10px;"></span> 
-      <span class="glyphicon glyphicon-bell" style="font-size:18px;"></span></a>
+      <span class="iconify" data-icon="il:bell" data-width="20" data-height="22"></span></a>
       <ul class="dropdown-menu"></ul>
      </li>
           </ul>
@@ -122,18 +118,13 @@ include 'fetch.php';
         <?php } else{ ?>
 
          <nav class="nav-menu d-none d-lg-block">
-
           <ul>
             <div id="clock"></div>
             <li class="active"><a href="index.php">Home</a></li>
             <li><a href="map.php">Map</a></li>
             <li class="get-started"><a href="login.php"><i class="fas fa-sign-out-alt"></i>Log In</a></li>
-             <li class="get-started"><a href="signup.php"><i class="fas fa-sign-out-alt"></i>Sign Up</a></li>
-                  <li class="dropdown">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="label label-pill label-danger count" style="border-radius:10px;"></span> 
-      <span class="glyphicon glyphicon-bell" style="font-size:18px;"></span></a>
-      <ul class="dropdown-menu"></ul>
-     </li>
+            <li class="get-started"><a href="signup.php"><i class="fas fa-sign-out-alt"></i>Sign Up</a></li>
+            
           </ul>
         </nav><!-- .nav-menu -->
         <?php } ?><!-- .nav-menu -->
@@ -143,15 +134,17 @@ include 'fetch.php';
 
 
 
+   <?php if(isset($_SESSION['loggedin'])) { ?>
+
   <div id='map' style='height:100%;width:100%;'></div>
 
   <div class="reading" id='reading' style='
   position:absolute; 
   text-align: center;
-  left: 1100px; 
+  left: 800px; 
   top:100px; 
-  width: 330px;
-  height: 300px;
+  width: auto;
+  height: auto;
   background-color: darkred;
   color: white;
   margin-top: 30px;
@@ -178,7 +171,7 @@ include 'fetch.php';
           </select>
           <select id="time3">
             <?php for($x = 0 ;$x <  60; $x++){ ?>
-              <option value="<?php echo $x + 1; ?>"><?php echo $x + 1;?></option>
+              <option value="<?php echo $x; ?>"><?php echo $x;?></option>
             <?php } ?>
           </select>
           <select id="time2">
@@ -196,9 +189,78 @@ include 'fetch.php';
 
             <input type="hidden" id="determine" name="determine">
           <input style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px" type="submit" id="pin" value="Pin" >
+
+
       </form>
  
   </div>
+
+
+
+                            
+
+  <div class="notif" id='notif' style='
+  position:absolute; 
+  text-align: center;
+  left: 1500px; 
+  top:780px; 
+  width: auto;
+  height: auto;
+  background-color: darkred;
+  color: white;
+  margin-top: 20px;
+  padding: 25px;
+  border-radius: 8px;
+  '>  <h2><span id="notif_location"></span></h2>
+          <h4<span id="notif_warning"></span> </h4>
+         
+
+  </div>
+
+
+
+
+
+
+
+
+  <?php } else{ ?>
+     <div id='map' style='height:100%;width:100%;'></div>
+
+  <div class="reading" id='reading' style='
+  position:absolute; 
+  text-align: center;
+  left: 800px; 
+  top:100px; 
+  width: auto;
+  height: auto;
+  background-color: darkred;
+  color: white;
+  margin-top: 30px;
+  padding: 15px;
+  border-radius: 8px;
+  '>  <h5><span id="streets"></span></h5>
+          <p>Flood level: <span id="readings"></span> cm.</p>
+          <p>Updated on <span id="date_time"></span></p>
+          <span id="wading"></span>
+
+
+      <form action="" id="signupForm">     
+         
+          <input type="hidden" id="location" name="location">
+          <input type="hidden" id="user" name="user" value="<?php echo  $_SESSION['user_id']; ?>">
+          
+          <div class="time_pin1" id='time_pin1'>
+              
+         
+
+
+
+      </form>
+ 
+  </div>
+
+  <?php } ?>
 
 
 
@@ -233,17 +295,16 @@ include 'fetch.php';
       var time_pin = <?= get_time_pin() ?>;
       var date_time = <?= get_date_time() ?>;
 
-
       var cur_time;
       var atime;
       var btime;
 
-
-$(function(){
+      $(function(){
     $("#reading").hide();
+    $("#notif").hide();
 });
 
-        mapboxgl.accessToken = 'pk.eyJ1IjoidGhpZWYxMjMxOCIsImEiOiJja3B1azZkbW0xYnB5MnVxY3Fva3ZxN3liIn0.AtpmrQgGaofQmeNWyMTp2Q'
+    mapboxgl.accessToken = 'pk.eyJ1IjoidGhpZWYxMjMxOCIsImEiOiJja3B1azZkbW0xYnB5MnVxY3Fva3ZxN3liIn0.AtpmrQgGaofQmeNWyMTp2Q'
 
 
     navigator.geolocation.getCurrentPosition(successLocation, errorLocation, {
@@ -349,7 +410,7 @@ $(function(){
               wading[i] = "Unsafe for motor bikes and smaller vehicles"
             }
             else if(readings[i] <= 60){
-              wading[i] = "Unsafe for Taxi's aand smaller vehicles"
+              wading[i] = "Unsafe for Taxi's and smaller vehicles"
             }
             else if(readings[i] <= 90){
               wading[i] = "Unsafe for Jeepneys, large SUV's, and smaller vehicles"
@@ -418,6 +479,7 @@ $(function(){
         
         map.on('load', function() {
         // window.alert(location_id);
+       
       
         });
         
@@ -516,13 +578,15 @@ $(function(){
         
         setInterval(function(){ 
           load_unseen_notification();; 
-        }, 3000);
+        }, 1000);
         
         });
+        var counter = 0;
 
-
-
+     
+     
         function realtimeClock(){
+         
 
           var rtClock = new Date();
 
@@ -536,6 +600,7 @@ $(function(){
           hours = (hours > 12 ) ? hours - 12: hours;
 
           hours = ("0" + hours).slice(-2);
+          hours2 = ("0" + hours).slice(-2);
           minutes = ("0" + minutes).slice(-2);
           seconds = ("0" + seconds).slice(-2);
           cur_time = hours2 + ":" + minutes + ":" + seconds;
@@ -543,14 +608,22 @@ $(function(){
 
           document.getElementById('clock').innerHTML = 
             hours + " : " + minutes + " : " + seconds + " " + amPm;
-
-          
+            //alert(time_pin[4] + " = " + cur_time + " = " + user_id_pin[1] + " = " + user);
+        
+         
           for (let x = 0; x < location_id_pin.length; x++){
+           if(counter == 1){
+            counter = 0;
+             break;
+           }
+             
+            
             if(time_pin[x] == cur_time && Number(user_id_pin[x]) == user){
-    
+              counter++;
+             
               for(let i = 0; i < saved_markers.length; i++) {
                 if(Number(location_id[i]) == Number(location_id_pin[x])){
-
+           
                  
               
                   if(readings[i] <=10){
@@ -574,6 +647,14 @@ $(function(){
                   var warning = wading[i];
                   var time = time_pin[x];
 
+
+                  document.getElementById("notif_location").innerHTML = location;
+                  document.getElementById("notif_warning").innerHTML = warning;
+                  $("#notif").show();
+
+                  
+               
+                  setInterval(function(){ $("#notif").hide(); }, 5000);
       
                   var url = 'mapdb.php?add_notif&location=' + location
                     + '&reading=' + reading + '&warning=' + warning + '&time=' + time;
@@ -582,13 +663,17 @@ $(function(){
                     method: 'GET',
                     dataType: 'json',
                     success: function(data){
-                        alert(data);
-                        load_unseen_notification();
-                        realtimeClock()
+                       
                     }
                   });
-                }
+                  
+                break;
+                
+                 
+                
+                } 
               }
+              
             }
           }
 
@@ -597,11 +682,9 @@ $(function(){
 
 
           var t = setTimeout(realtimeClock, 500);
-
-          
-
         
         }
+        //setInterval(function(){ alert(counter) }, 10000);
 
 
   </script>

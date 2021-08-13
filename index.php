@@ -72,7 +72,7 @@ session_start();
            <li class="active" style="margin-right: 37vw; padding-left: 10px"> <p>Hello, <?=$_SESSION['name']?>!</p> </li>
             <li class="active"><a href="index.php">Home</a></li>
             <li><a href="map.php">Map</a></li>
-            <li class="active"><a href="myping.php">My Pings</a></li>
+           
             <li class="get-started"><a href="logout.php"><i class="fas fa-sign-out-alt"></i>Logout</a></li>
           </ul>
         </nav><!-- .nav-menu -->
